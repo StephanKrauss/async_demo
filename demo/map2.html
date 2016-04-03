@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.map mit Array, Übergabe Fehler an Callback</title>
+</head>
+<body>
+    <h3>async.map mit Array, Übergabe Fehler an Callback</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Arbeitet das Array entsprechend der Reihenfolge ab.<br>
+        Entsprechend der 'Wartezeit' wird das Ergebnis an die Callback - Funktion übergeben.<br>
+        Es wird ein Fehler produziert und an die Callback - Funktion übergeben.
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var arr = [
+            {name:'Jack', delay:200},
+            {name:'Mike', delay: 100},
+            {name:'Freewind', delay:300},
+            {name:'Test', delay: 50}
+        ];
+
+        var i = 1;
+        async.map(arr, function(item, callback)
+        {
+            console.log('Eingabe aus Array: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log(i + '.Durchlauf, Name: ' + item.name + ', Zeit: ' + item.delay);
+
+                if(item.name == 'Jack')
+                    callback('Fehler');
+                else
+                    callback(null, item.name);
+
+                i++;
+            },
+            item.delay);
+
+        },
+        function(err, results) {
+            console.log('Auswertung Callback !!!');
+            console.log('Fehler Callback: ', err);
+            console.log('Ergebnis Callback: ', results);
+        });
+
+    </script>
+
+</body>
+</html>

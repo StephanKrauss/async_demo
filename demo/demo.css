@@ -1,0 +1,11 @@
+h3{
+    color: blue;
+    text-align: center;
+}
+
+#beschreibung{
+    padding: 10px;
+    margin: 10px;
+    border: solid 1px blue;
+    width: 600px;
+}

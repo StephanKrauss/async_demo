@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.series</title>
+</head>
+<body>
+    <h3>async.async.series</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von Serien.<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var serie = [
+            function(callback){
+                console.log('Serie C');
+                callback(null, 'Serie C');
+            },
+            function(callback){
+                console.log('Serie B');
+                callback(null, 'Serie B');
+            },
+            function(callback){
+                console.log('Serie A');
+                callback(null, 'Serie A');
+            }
+        ];
+
+        async.series(serie, function(err, results){
+            console.log('Auswertung Callback!');
+            console.log('Fehler Callback: ' + err);
+            console.log('Resultat Callback: ' + results);
+        });
+
+    </script>
+
+</body>
+</html>
