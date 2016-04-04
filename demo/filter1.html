@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.filter, async.reject</title>
+</head>
+<body>
+    <h3>async.filter, async.reject</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von Abläufen in einem Filter und .<br>
+        Endauswertung durch 'callback'<br>
+        This is also a very useful way to reduce your array or remove invalid entries from an array.
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var arr = [1,2,3,4,5];
+
+        async.filter(arr, function(item, callback)
+        {
+            console.log('1.1 enter: ' + item);
+
+            setTimeout(function()
+            {
+                console.log('1.1 test: ' + item);
+                callback(item >= 3);
+            },
+            200);
+        },
+        function(results) {
+            console.log('1.1 results: ', results);
+        });
+
+        async.filterSeries(arr, function(item, callback)
+        {
+            console.log('1.3 enter: ' + item);
+
+            setTimeout(function()
+            {
+                console.log('1.3 handle: ' + item);
+                callback(item >= 3);
+            },
+            200);
+        },
+        function(results) {
+            console.log('1.3 results: ', results);
+        });
+
+        async.reject(arr, function(item, callback)
+        {
+            console.log('1.4 enter: ' + item);
+
+            setTimeout(function()
+            {
+                console.log('1.4 test: ' + item);
+                callback(item >= 3);
+            }, 200);
+        },
+        function(results) {
+            console.log('1.4 results: ', results);
+
+            console.dir(arr);
+        });
+
+    </script>
+
+</body>
+</html>

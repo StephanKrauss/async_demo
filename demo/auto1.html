@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.auto</title>
+</head>
+<body>
+    <h3>async.auto</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von Serien / Waterfall.<br>
+        Definieren der Abhängigkeiten.<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        async.auto({
+            one: function(callback){
+                setTimeout(function(){
+                    callback(null, 1);
+                }, 200);
+            },
+            // If two does not depend on one, then you can remove the 'one' string
+            //   from the array and they will run asynchronously (good for "parallel" IO tasks)
+            two: ['one', function(callback, results){
+                setTimeout(function(){
+                    callback(null, 2);
+                }, 100);
+            }],
+            // Final depends on both 'one' and 'two' being completed and their results
+            final: ['one', 'two',function(err, results) {
+                // results is now equal to: {one: 1, two: 2}
+                console.log('Auswertung Callback!');
+                console.log('Fehler Callback: ' + err);
+                console.log(result);
+            }]
+        });
+
+    </script>
+
+</body>
+</html>

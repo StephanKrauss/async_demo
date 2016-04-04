@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.waterfall</title>
+</head>
+<body>
+    <h3>async.waterfall</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von Serien / Waterfall.<br>
+        Die Resultate der vorhergehenden Funktion werden an die nachfolgenden Funktion als Objekt übergeben.<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        async.waterfall([
+            function(callback, transfer)
+            {
+                var transfer = {};
+
+                // String
+                transfer.test1 = 'test1';
+
+                callback(null, transfer);
+            },
+            function(transfer, callback)
+            {
+                // Array
+                transfer.test2 = ['aaa','bbb','ccc'];
+
+                // arg1 now equals 'one' and arg2 now equals 'two'
+                callback(null, transfer);
+            },
+            function(transfer, callback)
+            {
+                // String + Int
+                transfer.test3 = 'abc';
+                transfer.test4 = 123456;
+
+                // arg1 now equals 'three'
+                callback(null, transfer);
+            }
+        ], function (err, result) {
+            console.log('Auswertung Callback!');
+            console.log('Fehler Callback: ' + err);
+            console.dir(result);
+        });
+
+    </script>
+
+</body>
+</html>

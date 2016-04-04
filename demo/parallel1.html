@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.parallel</title>
+</head>
+<body>
+    <h3>async.parallel</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von parallellen Abläufen.<br>
+        Endauswertung durch 'callback'<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        async.parallel([
+            function(callback)
+            {
+                callback(null, 'test1');
+            },
+            function(callback)
+            {
+                callback(null, 'test2');
+            },
+            function(callback)
+            {
+                callback(null, 'test3');
+            }
+        ], function (err, result) {
+            console.log('Auswertung Callback!');
+            console.log('Fehler Callback: ' + err);
+            console.log(result);
+        });
+
+    </script>
+
+</body>
+</html>

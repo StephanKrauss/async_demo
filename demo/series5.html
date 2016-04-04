@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.series mit einem Objekt</title>
+</head>
+<body>
+    <h3>async.series mit einem Objekt</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+        Verarbeiten von Serien.<br>
+        Abarbeiten eines Objektes.<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var testObj = {
+            one: function(callback){
+                setTimeout(function(){
+                    callback(null, 1);
+                }, 200);
+            },
+            two: function(callback){
+                setTimeout(function(){
+                    callback(null, 2);
+                }, 500);
+            },
+            three: function(callback){
+                setTimeout(function(){
+                    callback(null, 3);
+                }, 100);
+            }
+        };
+
+        async.series(testObj, function(err, results){
+            console.log('Auswertung Callback!');
+            console.log('Fehler Callback: ' + err);
+            console.dir(results);
+        });
+
+    </script>
+
+</body>
+</html>

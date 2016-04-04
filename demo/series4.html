@@ -4,57 +4,52 @@
     <meta charset="UTF-8">
     <link href="demo.css" rel="stylesheet">
 
-    <title>async.series mit einem Objekt</title>
+    <title>async.series mit einem Array, Funktionen extern</title>
 </head>
 <body>
-    <h3>async.series mit einem Objekt</h3>
+    <h3>async.series mit einem Array, Funktionen extern</h3>
 
     <div id="beschreibung">
         Console zuschalten!<br>
         Verarbeiten von Serien.<br>
-        Callback bekommt verschiedene Fehler.<br>
+        Funktionen sind extern.<br>
     </div>
 
     <script type="text/javascript" src="../dist/async.js"></script>
 
     <script type="text/javascript">
 
-        var serie = [
-            // Fehler als Int
-            function(callback){
-                console.log('Wert: Int');
-                callback(null, 'Int');
-                // callback(3, 'Int');
+        function test1(callback)
+        {
+            setTimeout(function()
+            {
+                console.log('Aufruf: test1 Zeit: 200');
+                callback(null, 'test1');
             },
-            // Fehler als 'undefined'
-            function(callback){
-                // Fehler
-                console.log('Wert: undefined');
-                callback(undefined, 'undefined');
+            200);
+        }
+
+        function test2(callback)
+        {
+            setTimeout(function()
+            {
+                console.log('Aufruf: test2 Zeit: 50');
+                callback(null, 'test2');
             },
-            // Fehler als null
-            function(callback){
-                console.log('Wert: null');
-                callback(null, 'null');
+            50);
+        }
+
+        function test3(callback)
+        {
+            setTimeout(function()
+            {
+                console.log('Aufruf: test2 Zeit: 100');
+                callback(null, 'test3');
             },
-            // Fehler als Objekt
-            function(callback){
-                console.log('Wert: Objekt');
-                callback(null, 'Objekt');
-                // callback({}, 'Objekt');
-            },
-            // Fehler als Array
-            function(callback){
-                console.log('Wert: Array');
-                callback(null, 'Array');
-            },
-            // Fehler als String
-            function(callback){
-                console.log('Wert: String');
-                // callback('abc', 'String');
-                callback(null, 'String');
-            }
-        ];
+            100);
+        }
+
+        var serie = [test1,test2,test3];
 
         async.series(serie, function(err, results){
             console.log('Auswertung Callback!');
