@@ -1,16 +1,25 @@
-# Async.js
+# Beschreibung
+Sammlung von Beispielen zur Verwendung der Javascript Bibliothek async.js
 
-Async is a utility module which provides straight-forward, powerful functions
-for working with asynchronous JavaScript.
+# Credits
 
-Async provides around 70 functions that include the usual 'functional'
-suspects (`map`, `reduce`, `filter`, `each`…) as well as some common patterns
-for asynchronous control flow (`parallel`, `series`, `waterfall`…). All these
-functions assume you follow the Node.js convention of providing a single
-callback as the last argument of your asynchronous function -- a callback which expects an Error as its first argument -- and calling the callback once.
++ **async.js Bibliothek:** https://github.com/caolan/async , Danke an Caolan McMahon , http://caolan.org
++ **async Beispiele:** https://github.com/freewind/async_demo , Danke an Freewind
 
+# Beschreibung Async.js
 
-## Quick Examples
+Async ist ein Werkzeug welches einfache und leistungsstarke Funktionen zur Verfügung stellt.
+Async vereinfacht asynchrones Javascript.
+
+Async bietet rund 70 Funktionen, die über das übliche " funktionale" enthalten.  
+Das sind die üblichen ( ` map` , ` reduce` , ` filter` , ` each` ... )  
+sowie einige gemeinsame Muster
+für die asynchrone Steuerung ( ` parallel` , ` series` , ` waterfall` ...).  
+Diese Funktionen sind im Browser und unter node.js verfügbar.
+Alle diese Funktionen übernehmen die Verwendung eines einzigen letzten Aufruf in Form einer Funktion.  
+Diese letzte Funktion hat als erstes Argument den aufgetretenen Fehler.  
+
+## einfaches Beispiel 
 
 ```js
 async.map(['file1','file2','file3'], fs.stat, function(err, results){
@@ -36,79 +45,19 @@ async.series([
 ]);
 ```
 
-There are many more functions available so take a look at the docs below for a
-full list. This module aims to be comprehensive, so if you feel anything is
-missing please create a GitHub issue for it.
+Es stehen viele weitere Funktionen zur Verfügung.  
+Diese sind weiter unten beschrieben.  
 
-## Common Pitfalls  
-### Synchronous iteration functions
+## Dokumentation
 
-If you get an error like `RangeError: Maximum call stack size exceeded.` or other stack overflow issues when using async, you are likely using a synchronous iteratee.  By *synchronous* we mean a function that calls its callback on the same tick in the javascript event loop, without doing any I/O or using any timers.  Calling many callbacks iteratively will quickly overflow the stack. If you run into this issue, just defer your callback with `async.setImmediate` to start a new call stack on the next tick of the event loop.
+Dieser Dokumentation enthält zahlreiche Beispiele.
+Bitte verwenden sie diese Beispiel im Zusammenhang mit dieser Dokumentation.  
 
-This can also arise by accident if you callback early in certain cases:
+Die Funktionen sind in folgender Form beschrieben:
+* `<name>Series` - ist das selbe wie `<name>` aber es wird immer nur eine asynchrone Operation zur selben Zeit ausgeführt.  
+* `<name>Limit` - ist das selbe wie `<name>` es wird ein maximum `limit` an asynchronen operationen zur selben Zeit ausgeführt.  
 
-```js
-async.eachSeries(hugeArray, function iteratee(item, callback) {
-    if (inCache(item)) {
-        callback(null, cache[item]); // if many items are cached, you'll overflow
-    } else {
-        doSomeIO(item, callback);
-    }
-}, function done() {
-    //...
-});
-```
-
-Just change it to:
-
-```js
-async.eachSeries(hugeArray, function iteratee(item, callback) {
-    if (inCache(item)) {
-        async.setImmediate(function () {
-            callback(null, cache[item]);
-        });
-    } else {
-        doSomeIO(item, callback);
-        //...
-    }
-});
-```
-
-Async does not guard against synchronous iteratees for performance reasons.  If you are still running into stack overflows, you can defer as suggested above, or wrap functions with [`async.ensureAsync`](#ensureAsync)  Functions that are asynchronous by their nature do not have this problem and don't need the extra callback deferral.
-
-If JavaScript's event loop is still a bit nebulous, check out [this article](http://blog.carbonfive.com/2013/10/27/the-javascript-event-loop-explained/) or [this talk](http://2014.jsconf.eu/speakers/philip-roberts-what-the-heck-is-the-event-loop-anyway.html) for more detailed information about how it works.
-
-
-### Multiple callbacks
-
-Make sure to always `return` when calling a callback early, otherwise you will cause multiple callbacks and unpredictable behavior in many cases.
-
-```js
-async.waterfall([
-    function (callback) {
-        getSomething(options, function (err, result) {
-            if (err) {
-                callback(new Error("failed getting something:" + err.message));
-                // we should return here
-            }
-            // since we did not return, this callback still will be called and
-            // `processData` will be called twice
-            callback(null, result);
-        });
-    },
-    processData
-], done)
-```
-
-It is always good practice to `return callback(err, result)`  whenever a callback call is not the last statement of a function.
-
-## Documentation
-
-Some functions are also available in the following forms:
-* `<name>Series` - the same as `<name>` but runs only a single async operation at a time
-* `<name>Limit` - the same as `<name>` but runs a maximum of `limit` async operations at a time
-
-### Collections
+### Funktionen zur Nutzung von Kollektionen
 
 * [`each`](#each), `eachSeries`, `eachLimit`
 * [`forEachOf`](#forEachOf), `forEachOfSeries`, `forEachOfLimit`
@@ -122,7 +71,7 @@ Some functions are also available in the following forms:
 * [`every`](#every), `everyLimit`, `everySeries`
 * [`concat`](#concat), `concatSeries`
 
-### Control Flow
+### Kontrolle der Steuerung
 
 * [`series`](#seriestasks-callback)
 * [`parallel`](#parallel), `parallelLimit`
@@ -144,7 +93,7 @@ Some functions are also available in the following forms:
 * [`times`](#times), `timesSeries`, `timesLimit`
 * [`race`](#race)
 
-### Utils
+### Werkzeuge
 
 * [`apply`](#apply)
 * [`nextTick`](#nextTick)
@@ -159,14 +108,14 @@ Some functions are also available in the following forms:
 * [`noConflict`](#noConflict)
 * [`timeout`](#timeout)
 
-## Collections
+## Abschnitt zur Nutzung von Kollektionen
 
-Collection methods can iterate over Arrays, Objects, Maps, Sets, and any object that implements the ES2015 iterator protocol.
+Collection Methoden können Arrays, Objects, Maps, Sets, und jedes objekt welches den Standard ES2015 befolgt bearbeiten.
 
 <a name="forEach"></a>
 <a name="each"></a>
 
-### each(coll, iteratee, [callback])
+### Funktion *each(coll, iteratee, [callback])*
 
 Applies the function `iteratee` to each item in `coll`, in parallel.
 The `iteratee` is called with an item from the list, and a callback for when it
@@ -178,8 +127,8 @@ there is no guarantee that the iteratee functions will complete in order.
 
 __Arguments__
 
-* `coll` - A collection to iterate over.
-* `iteratee(item, callback)` - A function to apply to each item in `coll`.
+* `coll` - eine Kollektion die bearbeitet wird.
+* `iteratee(item, callback)` - Eine Funktion mit der jedes Element der Kollektion `coll` bearbeitet wird.
   The iteratee is passed a `callback(err)` which must be called once it has
   completed. If no error has occurred, the `callback` should be run without
   arguments or with an explicit `null` argument.  The array index is not passed
@@ -187,7 +136,24 @@ __Arguments__
 * `callback(err)` - *Optional* A callback which is called when all `iteratee` functions
   have finished, or an error occurs.
 
-__Examples__
+**Beispiele**
+
+	// der erste Parameter in async.each() ist ein Array mit Elementen
+	async.each(items,
+      // der zweite Paramter ist eine Funktion die jedes Element des Array übernimmt		
+	  function(item, callback){
+	    // ruft eine asynchrone Funktion auf, oftmals ein speichern save() in eine Datenbank
+	    item.someAsyncCall(function (){
+	      // Aufruf der Callback Funktion
+	      callback();
+	    });
+	  },
+	  // Callback Funktion die aufgerufen wird wenn der Durchlauf beendet ist
+	  function(err){
+	    // Ende der Bearbeitung
+	    doSomethingOnceAllAreDone();
+	  }
+	);
 
 
 ```js
@@ -227,7 +193,7 @@ async.each(openFiles, function(file, callback) {
 });
 ```
 
-__Related__
+**siehe auch**
 
 * eachSeries(coll, iteratee, [callback])
 * eachLimit(coll, limit, iteratee, [callback])
@@ -237,44 +203,43 @@ __Related__
 <a name="forEachOf"></a>
 <a name="eachOf"></a>
 
-### forEachOf(coll, iteratee, [callback])
+### Funktion *forEachOf(coll, iteratee, [callback])*
 
-Like `each`, except that it passes the key (or index) as the second argument to the iteratee.
+Ähnlich `each`, erwartet das der key (oder index) als zweites Argument dem Iterator übergeben wird.
 
-__Arguments__
+**Arguments**
 
-* `coll` - A collection to iterate over.
-* `iteratee(item, key, callback)` - A function to apply to each item in `coll`.
-The `key` is the item's key, or index in the case of an array. The iteratee is
-passed a `callback(err)` which must be called once it has completed. If no
-error has occurred, the callback should be run without arguments or with an
-explicit `null` argument.
-* `callback(err)` - *Optional* A callback which is called when all `iteratee` functions have finished, or an error occurs.
+* `coll` - Eine Sammlung über die iteriert wird.
+* `iteratee(item, key, callback)` - Eine Funktion die jedes Element der Kollektion `coll` bearbeitet.
+Der `key` ist der Element Key, oder index im Falle eines Array.
+Der Iterator wird ein `callback(err)` übergeben welcher aufgerufen wird, wenn der Prozess beendet ist.  
+Wenn keine Fehler aufgetreten sind, der Callback wird ohne Argument oder mit 'null' aufgerufen.
+* `callback(err)` - *Optional* eine Callback Funktion die aufgerufen wird, wenn die `iteratee` Funktion beendet wurde.  
 
-__Example__
+**Beispiel**
 
-```js
-var obj = {dev: "/dev.json", test: "/test.json", prod: "/prod.json"};
-var configs = {};
+	var obj = {
+        dev: "/dev.json",
+        test: "/test.json",
+        prod: "/prod.json"
+    };
 
-async.forEachOf(obj, function (value, key, callback) {
-    fs.readFile(__dirname + value, "utf8", function (err, data) {
-        if (err) return callback(err);
-        try {
-            configs[key] = JSON.parse(data);
-        } catch (e) {
-            return callback(e);
-        }
-        callback();
+    var configs = {};
+
+    async.forEachOf(obj, function (value, key, callback)
+    {
+        console.log('Value: ' + value);
+        console.log('Key: ' + key);
+
+        callback(true);
+    },
+    function (err)
+    {
+        if(err)
+            console.log('Fehler');
     });
-}, function (err) {
-    if (err) console.error(err.message);
-    // configs is now a map of JSON data
-    doSomethingWith(configs);
-})
-```
 
-__Related__
+**siehe auch**
 
 * forEachOfSeries(coll, iteratee, [callback])
 * forEachOfLimit(coll, limit, iteratee, [callback])
