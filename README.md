@@ -1,3 +1,5 @@
+# Achtung, diese Dokumentation befindet sich in permanenter Überarbeitung
+
 # Beschreibung
 Sammlung von Beispielen zur Verwendung der Javascript Bibliothek async.js  
 Dokumentation auf Github: https://github.com/StephanKrauss/async_demo
@@ -6,9 +8,6 @@ Dokumentation auf Github: https://github.com/StephanKrauss/async_demo
 
 + **async.js Bibliothek:** https://github.com/caolan/async , Danke an Caolan McMahon , http://caolan.org
 + **async Beispiele:** https://github.com/freewind/async_demo , Danke an Freewind
-
-# Hinweis:
-Die Dokumentation der Javascript Bibliothek 'async.js' befindet sich in **permanenter** Überarbeitung !
 
 # Beschreibung: Async.js
 
@@ -172,6 +171,8 @@ Collection Methoden können Arrays, Objects, Maps, Sets, und jedes objekt welche
 
 ### > Funktion: *each(coll, iteratee, [callback])* <
 
+**Beschreibung**
+
 Applies the function `iteratee` to each item in `coll`, in parallel.
 The `iteratee` is called with an item from the list, and a callback for when it
 has finished. If the `iteratee` passes an error to its `callback`, the main
@@ -184,81 +185,103 @@ there is no guarantee that the iteratee functions will complete in order.
 
 * `coll` - eine Kollektion die bearbeitet wird.
 * `iteratee(item, callback)` - Eine Funktion mit der jedes Element der Kollektion `coll` bearbeitet wird.
-  The iteratee is passed a `callback(err)` which must be called once it has
-  completed. If no error has occurred, the `callback` should be run without
-  arguments or with an explicit `null` argument.  The array index is not passed
-  to the iteratee.  If you need the index, use [`forEachOf`](#forEachOf).
-* `callback(err)` - *Optional* A callback which is called when all `iteratee` functions
-  have finished, or an error occurs.
+  Die Iterator Funktion wird in die `callback(err)` Funktion eingepasst. Diese Callback **muss** nach dem abarbeiten des Iterator aufgerufen werden. Wenn kein Fehler aufgetreten ist, die `callback` Funktion muss ohne Argument oder mit `null` Argument aufgerufen werden.
 
 **Beispiele**
 
-	// der erste Parameter in async.each() ist ein Array mit Elementen
-	async.each(items,
-      // der zweite Paramter ist eine Funktion die jedes Element des Array übernimmt		
-	  function(item, callback){
-	    // ruft eine asynchrone Funktion auf, oftmals ein speichern save() in eine Datenbank
-	    item.someAsyncCall(function (){
-	      // Aufruf der Callback Funktion
-	      callback();
-	    });
-	  },
-	  // Callback Funktion die aufgerufen wird wenn der Durchlauf beendet ist
-	  function(err){
-	    // Ende der Bearbeitung
-	    doSomethingOnceAllAreDone();
-	  }
-	);
+	    var items = ['Jack','Mike','Freewind'];
 
+        async.each(items, function(item, callback)
+        {
+            console.log('Enter: ' + item);
 
-```js
-// assuming openFiles is an array of file names and saveFile is a function
-// to save the modified contents of that file:
-
-async.each(openFiles, saveFile, function(err){
-    // if any of the saves produced an error, err would equal that error
-});
-```
-
-```js
-// assuming openFiles is an array of file names
-
-async.each(openFiles, function(file, callback) {
-
-  // Perform operation on file here.
-  console.log('Processing file ' + file);
-
-  if( file.length > 32 ) {
-    console.log('This file name is too long');
-    callback('File name too long');
-  } else {
-    // Do work to process file here
-    console.log('File processed');
-    callback();
-  }
-}, function(err){
-    // if any of the file processing produced an error, err would equal that error
-    if( err ) {
-      // One of the iterations produced an error.
-      // All processing will now stop.
-      console.log('A file failed to process');
-    } else {
-      console.log('All files have been processed successfully');
-    }
-});
-```
+            if( item == 'Mike' )
+            {
+                console.log('Hello Mike');
+                callback('Mike');
+            }
+            else
+            {
+                console.log('Person');
+                callback();
+            }
+        },
+        function(err)
+        {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log('Person');
+            }
+        });
 
 **siehe auch**
 
 * eachSeries(coll, iteratee, [callback])
+* 
 * eachLimit(coll, limit, iteratee, [callback])
 
+		
+
 ---------------------------------------
+
+### > Funktion: *forEach(coll, iteratee, [callback])* <  
+
+**Beschreibung**
+
+**Beispiele**
+
+		var arr = [{name:'Jack', delay: 200},
+            {name:'Mike', delay: 100},
+            {name:'Freewind', delay: 300}];
+
+		async.forEach(arr, function(item, callback)
+        {
+            console.log('1.1 enter: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.1 handle: ' + item.name);
+                callback(null, item.name);
+            },item.delay);
+
+        },
+        function(err) {
+            console.log('Callback !');
+            console.log('1.1 err: ' + err);
+        });
+
+		async.forEach(arr,function(item, callback)
+        {
+            console.log('1.2 enter: ' +item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.2 handle: ' + item.name);
+
+                if(item.name == 'Jack') {
+                    callback('Fehler');
+                }
+
+            }, item.delay);
+        },
+        function(err) {
+            console.log('Callback !');
+            console.log('1.2 err: ' + err);
+        });
+
+
+
+
+---------------------------------------
+
 
 <a name="forEachOf"></a>
 <a name="eachOf"></a>
 
 ### > Funktion: *forEachOf(coll, iteratee, [callback])* <
+
+**Beschreibung**
 
 Ähnlich `each`, erwartet das der key (oder index) als zweites Argument dem Iterator übergeben wird.
 
@@ -305,6 +328,8 @@ Wenn keine Fehler aufgetreten sind, der Callback wird ohne Argument oder mit 'nu
 
 ### > Funktion: *map(coll, iteratee, [callback])* <
 
+**Beschreibung**
+
 Produces a new collection of values by mapping each value in `coll` through
 the `iteratee` function. The `iteratee` is called with an item from `coll` and a
 callback for when it has finished processing. Each of these callback takes 2 arguments:
@@ -327,11 +352,58 @@ However, the results array will be in the same order as the original `coll`.
 
 **Beispiel**
 
-```js
-async.map(['file1','file2','file3'], fs.stat, function(err, results){
-    // results is now an array of stats for each file
-});
-```
+ 		var arr = [
+            {name:'Jack', delay:200},
+            {name:'Mike', delay: 100},
+            {name:'Freewind', delay:300},
+            {name:'Test', delay: 50}
+        ];
+
+        var i = 1;
+        async.map(arr, function(item, callback)
+        {
+            console.log('Eingabe aus Array: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log(i + '.Durchlauf, Name: ' + item.name + ', Zeit: ' + item.delay);
+                callback(null, item.name);
+
+                i++;
+            },
+            item.delay);
+
+        },
+        function(err, results) {
+            console.log('Auswertung Callback !!!');
+            console.log('Fehler Callback: ', err);
+            console.log('Ergebnis Callback: ', results);
+        });
+
+		var i = 1;
+        async.map(arr, function(item, callback)
+        {
+            console.log('Eingabe aus Array: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log(i + '.Durchlauf, Name: ' + item.name + ', Zeit: ' + item.delay);
+
+                if(item.name == 'Jack')
+                    callback('Fehler');
+                else
+                    callback(null, item.name);
+
+                i++;
+            },
+            item.delay);
+
+        },
+        function(err, results) {
+            console.log('Auswertung Callback !!!');
+            console.log('Fehler Callback: ', err);
+            console.log('Ergebnis Callback: ', results);
+        });
 
 **in Beziehung**
 

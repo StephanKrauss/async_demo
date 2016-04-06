@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.each</title>
+</head>
+<body>
+    <h3>async.each</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var items = ['Jack','Mike','Freewind'];
+
+        async.each(items, function(item, callback)
+        {
+            console.log('Enter: ' + item);
+
+            if( item == 'Mike' )
+            {
+                console.log('Hello Mike');
+                callback('Mike');
+            }
+            else
+            {
+                console.log('Person');
+                callback();
+            }
+        },
+        function(err)
+        {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log('Person');
+            }
+        });
+
+    </script>
+
+</body>
+</html>

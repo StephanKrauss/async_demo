@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="demo.css" rel="stylesheet">
+
+    <title>async.foreach</title>
+</head>
+<body>
+    <h3>async.foreach</h3>
+
+    <div id="beschreibung">
+        Console zuschalten!<br>
+    </div>
+
+    <script type="text/javascript" src="../dist/async.js"></script>
+
+    <script type="text/javascript">
+
+        var arr = [{name:'Jack', delay: 200},
+            {name:'Mike', delay: 100},
+            {name:'Freewind', delay: 300}];
+
+        async.forEach(arr, function(item, callback)
+        {
+            console.log('1.1 enter: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.1 handle: ' + item.name);
+                callback(null, item.name);
+            },item.delay);
+
+        },
+        function(err) {
+            console.log('Callback !');
+            console.log('1.1 err: ' + err);
+        });
+
+        async.forEach(arr,function(item, callback)
+        {
+            console.log('1.2 enter: ' +item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.2 handle: ' + item.name);
+
+                if(item.name == 'Jack') {
+                    callback('Fehler');
+                }
+
+            }, item.delay);
+        },
+        function(err) {
+            console.log('Callback !');
+            console.log('1.2 err: ' + err);
+        });
+
+        async.forEachSeries(arr, function(item, callback)
+        {
+            console.log('1.3 enter: ' + item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.3 handle: ' + item.name);
+
+                callback(null, item.name);
+
+            }, item.delay);
+
+        },
+        function(err) {
+            console.log('Callback !');
+            console.log('1.3 err: ' + err);
+        });
+
+        async.forEachSeries(arr,function(item, callback)
+        {
+            console.log('1.4 enter: ' +item.name);
+
+            setTimeout(function()
+            {
+                console.log('1.4 handle: ' + item.name);
+
+                if(item.name == 'Mike')
+                    callback('Fehler');
+                else
+                    callback(null);
+
+            }, item.delay);
+
+        },
+        function(err)
+        {
+            console.log('Callback !');
+            console.log('1.4 err: ' + err);
+        });
+
+    </script>
+
+</body>
+</html>
